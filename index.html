@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASANALI | KTC INFRASTRUCTURE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS КАСКАД: ОСНОВА И ПЕРЕМЕННЫЕ */
+        :root {
+            --primary: #004a99;
+            --accent: #00f2ff;
+            --deep-bg: #030305;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(0, 242, 255, 0.2);
+            --neon-glow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: default; }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: var(--deep-bg);
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* ФОНОВЫЕ ЭФФЕКТЫ */
+        #canvas-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ГЛАВНЫЙ КОНТЕЙНЕР */
+        .main-frame {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ТИПОГРАФИКА (ОГРОМНЫЙ ШРИФТ) */
+        .name-wrapper {
+            position: relative;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .bg-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12rem;
+            font-weight: 900;
+            opacity: 0.03;
+            letter-spacing: 20px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .main-title {
+            font-size: 6rem;
+            font-weight: 900;
+            letter-spacing: -3px;
+            background: linear-gradient(to bottom, #fff 40%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(var(--neon-glow));
+            animation: titlePulse 4s infinite alternate;
+        }
+
+        @keyframes titlePulse {
+            from { filter: drop-shadow(0 0 5px rgba(0,242,255,0.2)); }
+            to { filter: drop-shadow(0 0 20px rgba(0,242,255,0.6)); }
+        }
+
+        /* ТЕХНОЛОГИЧЕСКАЯ КАРТОЧКА */
+        .status-panel {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 40px 60px;
+            width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .status-panel:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+        }
+
+        .data-column {
+            text-align: left;
+            border-left: 2px solid var(--border);
+            padding-left: 25px;
+        }
+
+        .data-column h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .data-column p {
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: #fff;
+        }
+
+        /* НИЖНИЙ ТЕХ-БЛОК */
+        .tech-stack {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 40px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            opacity: 0.4;
+            text-transform: uppercase;
+        }
+
+        /* ИНТЕРАКТИВНАЯ ЛИНИЯ */
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 242, 255, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 5;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-bg"></canvas>
+    <div class="overlay"></div>
+    <div class="scanline"></div>
+
+    <div class="main-frame">
+        <div class="name-wrapper">
+            <div class="bg-text">KAZAKHTELECOM</div>
+            <h1 class="main-title">ASANALI</h1>
+            <p style="letter-spacing: 12px; font-weight: 100; opacity: 0.7;">VIRTUAL INFRASTRUCTURE NODE</p>
+        </div>
+
+        <div class="status-panel">
+            <div class="data-column">
+                <h3>Host System</h3>
+                <p>Ubuntu 22.04 LTS</p>
+            </div>
+            <div class="data-column">
+                <h3>Core Network</h3>
+                <p>Nginx/Stable 1.18</p>
+            </div>
+            <div class="data-column">
+                <h3>Security Layer</h3>
+                <p id="security-text">UFW ACTIVE</p>
+            </div>
+            <div class="data-column">
+                <h3>Node Latency</h3>
+                <p id="ms">08 ms</p>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <span>SSH-Tunnel Enabled</span>
+            <span>Port 8080 Active</span>
+            <span>System Uptime: 99.9%</span>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: ЖИВОЙ ФОН И ДИНАМИКА -->
+    <script>
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.x > canvas.width) this.x = 0;
+                if(this.x < 0) this.x = canvas.width;
+                if(this.y > canvas.height) this.y = 0;
+                if(this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                for(let j=index; j<particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    if(distance < 150) {
+                        ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 - distance/1500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // Динамические цифры
+        setInterval(() => {
+            document.getElementById('ms').innerText = (Math.floor(Math.random() * 5) + 7).toString().padStart(2, '0') + ' ms';
+        }, 3000);
+
+        window.addEventListener('resize', () => {
+            particles = [];
+            init();
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
